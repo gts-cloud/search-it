@@ -105,7 +105,8 @@ fetch('data.json')
 
 function handleSearch(e) {
   e.preventDefault();
-  const input = document.getElementById('shortid').value.trim();
+  const raw = document.getElementById('shortid').value.trim();
+  const input = raw.replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
   const error = document.getElementById('error');
 
   if (!input) {
