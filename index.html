@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>作品検索</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+    background: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .search-wrap {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 40px 32px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+  }
+  .search-title {
+    font-size: 24px;
+    font-weight: 900;
+    margin-bottom: 12px;
+    color: #111;
+  }
+  .search-text {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+  .search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .search-form input {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 18px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    text-align: center;
+    letter-spacing: 0.1em;
+    transition: border-color 0.2s;
+  }
+  .search-form input:focus {
+    border-color: #333;
+  }
+  .search-form button {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    background: #222;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .search-form button:hover {
+    background: #444;
+  }
+  .error {
+    color: #e53935;
+    font-size: 14px;
+    margin-top: 16px;
+    display: none;
+  }
+  .error.show {
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<div class="search-wrap">
+  <h1 class="search-title">作品検索</h1>
+  <p class="search-text">
+    動画内またはコメント欄に表示されている作品番号を入力してください
+  </p>
+  <form class="search-form" onsubmit="return handleSearch(event)">
+    <input type="text" id="shortid" placeholder="例：001" inputmode="numeric" autocomplete="off">
+    <button type="submit">検索</button>
+  </form>
+  <div class="error" id="error">無効な番号です。</div>
+</div>
+
+<script>
+let DATA = {};
+
+fetch('data.json')
+  .then(r => r.json())
+  .then(d => { DATA = d; })
+  .catch(() => {});
+
+function handleSearch(e) {
+  e.preventDefault();
+  const input = document.getElementById('shortid').value.trim();
+  const error = document.getElementById('error');
+
+  if (!input) {
+    error.textContent = '番号を入力してください。';
+    error.classList.add('show');
+    return false;
+  }
+
+  const padded = input.padStart(3, '0');
+  const url = DATA[padded] || DATA[input];
+
+  if (url) {
+    window.location.href = url;
+  } else {
+    error.textContent = '無効な番号です。';
+    error.classList.add('show');
+  }
+  return false;
+}
+</script>
+
+</body>
+</html>
